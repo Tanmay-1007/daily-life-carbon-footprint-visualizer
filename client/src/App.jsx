@@ -8,6 +8,9 @@ import {
   Cell,
   LineChart,
   Line,
+  RadialBarChart,
+  RadialBar,
+  PolarAngleAxis,
   XAxis,
   YAxis,
   Tooltip,
@@ -35,6 +38,14 @@ function buildPieData(categories) {
     name,
     value,
     color: chartColors[index % chartColors.length]
+  }));
+}
+
+function buildRadialData(categories) {
+  return Object.entries(categories).map(([name, value], index) => ({
+    name,
+    value,
+    fill: chartColors[index % chartColors.length]
   }));
 }
 
@@ -246,7 +257,7 @@ export default function App() {
                 <div className="trend-panel">
                   <div className="panel-heading">
                     <h3>Footprint trend</h3>
-                    <p>Track your last submissions to see progress over time.</p>
+                    <p>Track recent submissions to spot improvements or spikes.</p>
                   </div>
                   <ResponsiveContainer width="100%" height={260}>
                     <LineChart data={buildTrendData(history)}>
@@ -257,6 +268,72 @@ export default function App() {
                       <Line type="monotone" dataKey="total" stroke="#34c6ff" strokeWidth={4} dot={{ r: 4, fill: '#34c6ff' }} />
                     </LineChart>
                   </ResponsiveContainer>
+                </div>
+
+                <div className="visual-grid">
+                  <div className="chart-box">
+                    <div className="panel-heading">
+                      <h3>Category comparison</h3>
+                      <p>Compare each emission source side by side.</p>
+                    </div>
+                    <ResponsiveContainer width="100%" height={280}>
+                      <BarChart data={buildChartData(report.result.categories)}>
+                        <CartesianGrid strokeDasharray="4 4" opacity={0.16} />
+                        <XAxis dataKey="name" tick={{ fill: '#a8b6c1' }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fill: '#a8b6c1' }} axisLine={false} tickLine={false} />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f1723', borderColor: '#1f2a38', color: '#f8fafc' }} />
+                        <Bar dataKey="value" fill="#5b8e7d" radius={[10, 10, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div className="chart-box">
+                    <div className="panel-heading">
+                      <h3>Category distribution</h3>
+                      <p>Visualize how each category contributes to total emissions.</p>
+                    </div>
+                    <ResponsiveContainer width="100%" height={280}>
+                      <PieChart>
+                        <Pie
+                          data={buildPieData(report.result.categories)}
+                          dataKey="value"
+                          nameKey="name"
+                          outerRadius={100}
+                          innerRadius={45}
+                          paddingAngle={4}
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {buildPieData(report.result.categories).map((entry) => (
+                            <Cell key={entry.name} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip contentStyle={{ backgroundColor: '#0f1723', borderColor: '#1f2a38', color: '#f8fafc' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="pie-legend">
+                      {buildPieData(report.result.categories).map((entry) => (
+                        <div key={entry.name} className="legend-item">
+                          <span className="legend-swatch" style={{ background: entry.color }} />
+                          <span>{entry.name}</span>
+                          <strong>{entry.value} kg</strong>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="chart-box radial-chart-box">
+                    <div className="panel-heading">
+                      <h3>Category share</h3>
+                      <p>A radial overview of emissions by source.</p>
+                    </div>
+                    <ResponsiveContainer width="100%" height={280}>
+                      <RadialBarChart innerRadius="10%" outerRadius="90%" data={buildRadialData(report.result.categories)} startAngle={180} endAngle={-180}>
+                        <PolarAngleAxis type="number" domain={[0, Math.max(...Object.values(report.result.categories))]} tick={false} />
+                        <Tooltip contentStyle={{ backgroundColor: '#0f1723', borderColor: '#1f2a38', color: '#f8fafc' }} />
+                        <RadialBar minAngle={15} label={{ position: 'insideStart', fill: '#eef2ff', fontSize: 12 }} background clockWise dataKey="value" />
+                      </RadialBarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
 

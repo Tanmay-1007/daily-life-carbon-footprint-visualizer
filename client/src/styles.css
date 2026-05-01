@@ -294,6 +294,30 @@ button:hover {
   padding: 20px;
 }
 
+.visual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 22px;
+}
+
+.chart-box {
+  background: rgba(9, 16, 31, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 24px;
+  padding: 18px;
+}
+
+.radial-chart-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chart-box .panel-heading {
+  margin-bottom: 18px;
+}
+
 .recommendations-panel {
   background: rgba(9, 16, 28, 0.96);
   border: 1px solid rgba(148, 163, 184, 0.1);
