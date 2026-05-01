@@ -327,8 +327,17 @@ export default function App() {
                       <p>A radial overview of emissions by source.</p>
                     </div>
                     <ResponsiveContainer width="100%" height={280}>
-                      <RadialBarChart innerRadius="10%" outerRadius="90%" data={buildRadialData(report.result.categories)} startAngle={180} endAngle={-180}>
-                        <PolarAngleAxis type="number" domain={[0, Math.max(...Object.values(report.result.categories))]} tick={false} />
+                      <RadialBarChart
+                        cx="50%"
+                        cy="50%"
+                        innerRadius="40%"
+                        outerRadius="90%"
+                        barSize={18}
+                        data={buildRadialData(report.result.categories)}
+                        startAngle={180}
+                        endAngle={-180}
+                      >
+                        <PolarAngleAxis type="number" domain={[0, 'dataMax']} tick={false} />
                         <Tooltip contentStyle={{ backgroundColor: '#0f1723', borderColor: '#1f2a38', color: '#f8fafc' }} />
                         <RadialBar minAngle={15} label={{ position: 'insideStart', fill: '#eef2ff', fontSize: 12 }} background clockWise dataKey="value" />
                       </RadialBarChart>
